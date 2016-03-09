@@ -63,7 +63,10 @@ function formatComplexFact($fact, $verbose) {
         }
         $overrides = [];
         foreach($fact->overrides as $ofact) {
-            $overrides[] = "\r\n\t".html_entity_decode('&#8627;').' '.formatFact($ofact).' ('.getNameById($ofact->requires_trait, 'trait').' - '.$ofact->requires_trait.')';
+            $oname = getNameById($ofact->requires_trait, 'trait');
+            if ($oname) {
+              $overrides[] = "\r\n\t".html_entity_decode('&#8627;').' '.formatFact($ofact).' ('.getNameById($ofact->requires_trait, 'trait').' - '.$ofact->requires_trait.')';
+            }
         }
         return $base.implode('', $overrides);
     }
