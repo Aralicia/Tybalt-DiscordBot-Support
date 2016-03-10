@@ -33,7 +33,7 @@ function getSkillTitle($skill, $verbose) {
     if (isset($skill->categories) && count($skill->categories) > 0) {
         $categories = ' ['.implode(', ', $skill->categories).']';
     }
-    return $skill->name.' - '.(empty($profession) ? '': $profession.' ').$type.$categories;
+    return $skill->name.' • '.(empty($profession) ? '': $profession.' ').$type.$categories;
 }
 function getAllFacts($skill) {
     $baseFacts = (isset($skill->facts) ? $skill->facts : []);
@@ -84,21 +84,21 @@ $lines = [];
 $lines[] = getSkillTitle($data, $verbose);
 $lines[] = $data->description;
 if (isset($data->cost)) {
-    $lines[] = 'Energy Cost : '.$data->cost;
+    $lines[] = '• Energy Cost : '.$data->cost;
 }
 if (isset($data->initiative)) {
-    $lines[] = 'Initiative Cost : '.$data->cost;
+    $lines[] = '• Initiative Cost : '.$data->cost;
 }
 foreach(getAllFacts($data) as $fact) {
-    $lines[] = formatComplexFact($fact, $verbose);
+    $lines[] = '• '.formatComplexFact($fact, $verbose);
 }
 
 if ($verbose) {
     if (isset($data->flip_skill)) {
         if (in_array('Gadget', $data->categories)) {
-            $lines[] = 'Overcharge : '.getNameById($data->flip_skill, 'skill').' ('.$data->flip_skill.')';
+            $lines[] = '• Overcharge : '.getNameById($data->flip_skill, 'skill').' ('.$data->flip_skill.')';
         } else {
-            $lines[] = 'Flip To : '.getNameById($data->flip_skill, 'skill').' ('.$data->flip_skill.')';
+            $lines[] = '• Flip To : '.getNameById($data->flip_skill, 'skill').' ('.$data->flip_skill.')';
         }
     }
     if (isset($data->transform_skills) && !empty($data->transform_skills)) {
@@ -107,17 +107,17 @@ if ($verbose) {
             if ($name == false) return null;
             return $name.' ('.$val.')';
         }, $data->transform_skills);
-        $lines[] = 'Transformed Skills : '.implode(', ', array_filter($skillList));
+        $lines[] = '• Transformed Skills : '.implode(', ', array_filter($skillList));
     }
     if (isset($data->bundle_skills) && !empty($data->bundle_skills)) {
         $skillList = array_map(function($val) {
             if ($name == false) return null;
             return $name.' ('.$val.')';
         }, $data->bundle_skills);
-        $lines[] = 'Bundle Skills : '.implode(', ', array_filter($skillList));
+        $lines[] = '• Bundle Skills : '.implode(', ', array_filter($skillList));
     }
     if (isset($data->toolbelt_skill)) {
-        $lines[] = 'Toolbelt Skill : '.getNameById($data->toolbelt_skill, 'skill').' ('.$data->toolbelt_skill.')';
+        $lines[] = '• Toolbelt Skill : '.getNameById($data->toolbelt_skill, 'skill').' ('.$data->toolbelt_skill.')';
     }
 }
 $lines[] = 'Chat Link : '.$data->chat_link;

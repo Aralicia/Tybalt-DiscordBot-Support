@@ -24,7 +24,7 @@ function isId($val) {
 }
 function reply($message, $code=false) {
     if ($code) {
-        $message = '```'.$message.'```';
+        $message = '```'."\r\n".$message.'```';
     }
     echo $message;
     exit();
