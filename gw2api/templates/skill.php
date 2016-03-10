@@ -55,7 +55,7 @@ function getAllFacts($skill) {
 function formatComplexFact($fact, $verbose) {
     if (isset($fact->requires_trait)) {
         if (!$verbose) return null;
-        return html_entity_decode('&#8594;').' '.formatFact($fact).' ('.getNameById($fact->requires_trait, 'trait').' - '.$fact->requires_trait.')';
+        return utf(8594).' '.formatFact($fact).' ('.getNameById($fact->requires_trait, 'trait').' - '.$fact->requires_trait.')';
     } else if (isset($fact->overrides) && $verbose){
         $base = formatFact($fact);
         if ($base == null) {
@@ -65,7 +65,7 @@ function formatComplexFact($fact, $verbose) {
         foreach($fact->overrides as $ofact) {
             $oname = getNameById($ofact->requires_trait, 'trait');
             if ($oname) {
-              $overrides[] = "\r\n\t".html_entity_decode('&#8627;').' '.formatFact($ofact).' ('.getNameById($ofact->requires_trait, 'trait').' - '.$ofact->requires_trait.')';
+              $overrides[] = "\r\n\t".utf(8627).' '.formatFact($ofact).' ('.getNameById($ofact->requires_trait, 'trait').' - '.$ofact->requires_trait.')';
             }
         }
         return $base.implode('', $overrides);

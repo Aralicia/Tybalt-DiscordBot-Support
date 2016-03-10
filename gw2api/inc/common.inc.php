@@ -29,3 +29,7 @@ function reply($message, $code=false) {
     echo $message;
     exit();
 }
+
+function utf($code) {
+    return html_entity_decode('&#'.$code.';');
+}
