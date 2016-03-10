@@ -17,7 +17,15 @@ $st1->store_result();
 $st1->bind_result($id, $api_id, $type);
 while ($st1->fetch()) {
     $data = api()->v2($type.'s', ['params' => ['id' => $api_id]]);
-    $name = $data->name;
+    if ($type == 'recipe') {
+        $itemName = getNameById($data->output_item_id, 'item');
+        if ($itemName === FALSE) {
+            $itemName = '[unknown]';
+        }
+        $name = $itemName.' x'.$data->output_item_count;
+    } else {
+        $name = $data->name;
+    }
     $st2->execute();
 }
 

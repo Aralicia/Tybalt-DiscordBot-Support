@@ -3,7 +3,7 @@
 require_once(dirname(__DIR__).'/inc/database.inc.php');
 require_once(dirname(__DIR__).'/inc/api.inc.php');
 
-$types = ['skill', 'trait', 'item', 'recipe'];
+$types = [/*'skill', 'trait', 'item', 'recipe', */"specialization"];
 
 $entity = "";
 $type = "";
