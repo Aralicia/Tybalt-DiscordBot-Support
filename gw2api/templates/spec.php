@@ -21,7 +21,8 @@ function getSpecializationTitle($spec, $verbose) {
     return $spec->name.' • '.$spec->profession.' • '.getSpecType($spec->elite).' specialization';
 }
 function getSpecTraits($specData) {
-    $traitData = api()->v2('traits', ['params' => ['ids' => array_merge($specData->minor_traits, $specData->major_traits)]]);
+    //$traitData = api()->v2('traits', ['params' => ['ids' => array_merge($specData->minor_traits, $specData->major_traits)]]);
+    $traitData = api()->v2('traits', ['params' => ['ids' => implode(',', array_merge($specData->minor_traits, $specData->major_traits))]]);
     $traits = (object)[
         'adept' => (object)['minor' => null, 'major' => []],
         'master' => (object)['minor' => null, 'major' => []],
@@ -29,18 +30,21 @@ function getSpecTraits($specData) {
     ];
     $tiers = [$traits->adept, $traits->master, $traits->grandmaster];
     foreach($traitData as $trait) {
-        $tier = $tiers[$trait->tier];
+        //$tier = $tiers[$trait->tier-1];
+        $tierNum = $trait->tier-1;
+        //$tier = getTier($trait->tier);
         if ($trait->slot == 'Minor') {
-            $tiers[$trait->tier]->minor = $trait;
+            //$tiers[$trait->tier]->minor = $trait;
+            //$traits[$tier]->minor = $trait;
+            $tiers[$tierNum]->minor = $trait;
         } else {
-            $tiers[$trait->tier]->major[$trait->order] = $trait;
+            //$tiers[$trait->tier]->major[$trait->order] = $trait;
+            //$traits[$tier]->major[$trait->order] = $trait;
+            $tiers[$tierNum]->major[$trait->order] = $trait;
         }
     }
     return $traits;
 }
-
-
-
 
 
 $traits = getSpecTraits($data);
