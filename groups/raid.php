@@ -1,12 +1,16 @@
 <?php
 
+$jsonRaw = $argv['1'];
 //$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["announce","Doing","Spirit Vale","03/11 '.uniqid().'"]}';
-$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["list"]}';
-$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["list", "2"]}';
+//$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["list"]}';
+//$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["list", "2"]}';
 //$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["close", "3"]}';
 //$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["open", "2"]}';
 //$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["remove", "2"]}';
 //$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["join","2","Thief or Elem"]}';
+//$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["leave","2"]}';
+//$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["call","2"]}';
+
 
 
 require_once(__DIR__.'/inc/common.inc.php');
@@ -62,7 +66,8 @@ function do_list($author, $arguments) {
             reply('I don\'t know this raid.');
         }
 
-        $raids = [];
+        $raid = null;
+        $members = [];
         $raidId = null;
         $authorName = null;
         $authorName = null;
@@ -75,13 +80,27 @@ function do_list($author, $arguments) {
         $st->fetch();
         $raid = (object)[
             'id' => $raidId,
-            'authorId' => $raidId,
-            'authorName' => $raidId,
+            'authorId' => $authorId,
+            'authorName' => $authorName,
             'authorServ' => $authorServ,
             'comment' => $comment,
             'creationDate' => $creationDate,
             'closed' => $closed,
         ];
+        $st->close();
+
+        $st = db()->prepare('SELECT member_id, member_name, comment FROM group_raid_member WHERE raid_id = ?');
+        $st->bind_param('i', intval($arguments[1]));
+        $st->execute();
+        $st->bind_result($authorId, $authorName, $comment);
+        while ($st->fetch()) {
+            $members[] = (object)[
+                'memberId' => $authorId,
+                'memberName' => $authorName,
+                'comment' => $comment
+            ];
+        }
+
 
         $st->close();
         include(__DIR__.'/templates/raid_details.php');
@@ -156,7 +175,7 @@ function do_edit($author, $arguments) {
     $st->close();
     
     if (!can_edit($author, $authorId)) {
-        reply('You can\'t '.$arguments[0].' close this raid');
+        reply('You can\'t '.$arguments[0].' this raid');
     }
     if ($closed && $close) {
         reply('This raid is already closed !');
@@ -235,6 +254,90 @@ function do_join($author, $arguments) {
     
 }
 function do_leave($author, $arguments) {
+    if (!(count($arguments) > 1 && isId($arguments[1]))) {
+        reply('I can\'t find that !');
+    }
+    $id = intval($arguments[1]);
+
+
+    $st = db()->prepare('SELECT raid_id, author_name, comment FROM group_raid WHERE raid_id = ?');
+    $st->bind_param('i', $id);
+    $st->execute();
+    $st->store_result();
+
+    $count = $st->num_rows;
+    if ($count != 1) {
+        $st->close();
+        reply('No raid matches this id.');
+    }
+
+    $raidId = null;
+    $authorName = null;
+    $raidComment = null;
+    $entryID = null;
+
+    $st->bind_result($raidId, $authorName, $raidComment);
+    $st->fetch();
+    $st->close();
+
+    $st = db()->prepare('SELECT ID FROM group_raid_member WHERE raid_id = ? AND member_id = ?');
+    $st->bind_param('is', $raidId, $author->id);
+    $st->execute();
+    $st->store_result();
+    $count = $st->num_rows;
+    if ($count < 1) {
+        $st->close();
+        reply('You aren\'t a member of this raid.');
+    }
+    $st->bind_result($entryID);
+    $st->fetch();
+    $st->close();
+    
+    $st = db()->prepare('DELETE FROM group_raid_member WHERE raid_id = ?');
+    $st->bind_param('i', $raidId);
+    $st->execute();
+    $st->close();
+    reply($author->name.' just left the raid *'.$raidComment.'*.');
+}
+
+function do_call($author, $arguments) {
+    if (!(count($arguments) > 1 && isId($arguments[1]))) {
+        reply('I can\'t find that !');
+    }
+    $id = intval($arguments[1]);        
+    $st = db()->prepare('SELECT raid_id, author_id FROM group_raid WHERE raid_id = ?');
+    $st->bind_param('i', $id);
+    $st->execute();
+    $st->store_result();
+
+    $count = $st->num_rows;
+    if ($count != 1) {
+        $st->close();
+        reply('No raid matches this id.');
+    }
+
+    $raidId = null;
+    $authorId = null;
+    $members = [];
+
+    $st->bind_result($raidId, $authorId);
+    $st->fetch();
+    $st->close();
+
+    if (!can_edit($author, $authorId)) {
+        reply('You can\'t call this raid');
+    }
+
+    $st = db()->prepare('SELECT member_id FROM group_raid_member WHERE raid_id = ?');
+    $st->bind_param('i', $id);
+    $st->execute();
+    $st->bind_result($authorId);
+    while ($st->fetch()) {
+        $members[] = '<@'.$authorId.'>';
+    }
+    $st->close();
+    reply('**RAID TIME !**'."\r\n".implode(', ', $members));
+// <@ID>
 }
 
 $json = json_decode($jsonRaw);
@@ -254,7 +357,8 @@ $commandList = [
     'close' => 'do_edit',
     'remove' => 'do_edit',
     'join' => 'do_join',
-    'leave' => 'do_leave'
+    'leave' => 'do_leave',
+    'call' => 'do_call'
 /*    'join' => '',
  *    'leave' => '',
  *    'help' => '',

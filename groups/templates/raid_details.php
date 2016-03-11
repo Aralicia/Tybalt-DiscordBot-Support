@@ -49,4 +49,7 @@ function getRaidTitle($raid) {
 $lines = [];
 $lines[] = getRaidTitle($raid);
 $lines[] = 'Raid members :';
+foreach ($members as $member) {
+    $lines[] = '- '.$member->memberName.' ('.$member->comment.')';
+}
 reply(implode("\r\n", array_filter($lines)));
