@@ -26,7 +26,8 @@ function reply($message, $code=false) {
     if ($code) {
         $message = '```'."\r\n".$message.'```';
     }
-    echo $message;
+    $json = json_encode(['status' => 'ok', 'print' => $message]);
+    echo $json;
     exit();
 }
 
