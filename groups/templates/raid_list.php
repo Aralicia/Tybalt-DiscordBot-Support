@@ -41,10 +41,14 @@ $lines = [];
 $lines[] = 'Announced raids :';
 foreach($raids as $raid) {
     $id = '`'.$raid->id.'`';
-    $comment = '*'.$raid->comment.'*'.($raid->authorServ ? ' ('.strtoupper($raid->authorServ).')' : '');
+    //$comment = '*'.$raid->comment.'*'.($raid->authorServ ? ' ('.strtoupper($raid->authorServ).')' : '');
+    $comment = '*'.$raid->comment.'*';
+    $server = ($raid->authorServ ? strtoupper($raid->authorServ) : '');
+    $membersCounter = $raid->membersCounter;
     $authorName = $raid->authorName;
     $time = whenWasThat($raid->creationDate);
     $closed = ($raid->closed ? ' [CLOSED]' : '');
-    $lines[] = $id.' : '.$comment.' by '.$authorName.' '.$time.$closed;
+    //$lines[] = $id.' : '.$comment.' by '.$authorName.' '.$time.$closed;
+    $lines[] = $id.': **'.$server.'** ['.$membersCounter.']  '.$comment.'  by **'.$authorName.'** '.$time.$closed;
 }
 reply(implode("\r\n", array_filter($lines)));

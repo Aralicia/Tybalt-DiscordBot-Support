@@ -22,11 +22,13 @@ function parseArgs() {
 function isId($val) {
     return ctype_digit($val);
 }
-function reply($message, $code=false) {
+//function reply($message, $code=false) {
+function reply($message, $code=false, $pmTo=[]) {
     if ($code) {
         $message = '```'."\r\n".$message.'```';
     }
-    $json = json_encode(['status' => 'ok', 'print' => $message]);
+    //$json = json_encode(['status' => 'ok', 'print' => $message]);
+    $json = json_encode(['status' => 'ok', 'print' => $message, 'pmTo' => $pmTo]);
     echo $json;
     exit();
 }

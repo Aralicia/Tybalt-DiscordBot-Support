@@ -107,7 +107,9 @@ function do_list($author, $arguments) {
     } else {
         // list mathcing raids
         $filter = '%'.implode(' ', array_slice($arguments, 1)).'%';
-        $st = db()->prepare('SELECT raid_id, author_name, author_serv, comment, creation_date, closed FROM group_raid WHERE comment LIKE ? ORDER BY raid_id ASC');
+        $membersCountSelect = '(SELECT COUNT(*) FROM group_raid_member grm WHERE grm.raid_id = group_raid.raid_id) as Q';
+        //$st = db()->prepare('SELECT raid_id, author_name, author_serv, comment, creation_date, closed FROM group_raid WHERE comment LIKE ? ORDER BY raid_id ASC');
+        $st = db()->prepare('SELECT raid_id, author_name, author_serv, comment, creation_date, closed, '.$membersCountSelect.' FROM group_raid WHERE comment LIKE ? ORDER BY raid_id ASC');
         $st->bind_param('s', $filter);
         $st->execute();
         $st->store_result();
@@ -125,8 +127,10 @@ function do_list($author, $arguments) {
         $comment = null;
         $creationDate = null;
         $closed = null;
+        $membersCounter = 0;
 
-        $st->bind_result($raidId, $authorName, $authorServ, $comment, $creationDate, $closed);
+        //$st->bind_result($raidId, $authorName, $authorServ, $comment, $creationDate, $closed);
+        $st->bind_result($raidId, $authorName, $authorServ, $comment, $creationDate, $closed, $membersCounter);
         while($st->fetch()) {
             $raids[] = (object)[
                 'id' => $raidId,
@@ -134,7 +138,8 @@ function do_list($author, $arguments) {
                 'authorServ' => $authorServ,
                 'comment' => $comment,
                 'creationDate' => $creationDate,
-                'closed' => $closed
+                'closed' => $closed,
+                'membersCounter' => $membersCounter
             ];
         }
         $st->close();
@@ -304,6 +309,13 @@ function do_call($author, $arguments) {
     if (!(count($arguments) > 1 && isId($arguments[1]))) {
         reply('I can\'t find that !');
     }
+    reply('Debugging: '.$arguments[2]);
+    reply('I can only reply once.');
+    $account = '';
+    if ($arguments[2]){
+        $account = $arguments[2];
+    }
+    
     $id = intval($arguments[1]);        
     $st = db()->prepare('SELECT raid_id, author_id FROM group_raid WHERE raid_id = ?');
     $st->bind_param('i', $id);
@@ -334,8 +346,20 @@ function do_call($author, $arguments) {
     $st->bind_result($authorId);
     while ($st->fetch()) {
         $members[] = '<@'.$authorId.'>';
+        /*
+        if ($account){
+            $msg = '`/squadjoin '.$account.'`';
+            reply('More debugging: '.$msg.' # '.$authorId);
+            send_message($authorId, $msg);
+        }
+        */
     }
     $st->close();
+    if ($account){
+        $msg = '`/squadjoin '.$account.'`';
+        //reply('More debugging: '.$msg.' # '.$authorId);
+        reply($msg, false, $members);
+    }    
     reply('**RAID TIME !**'."\r\n".implode(', ', $members));
 // <@ID>
 }

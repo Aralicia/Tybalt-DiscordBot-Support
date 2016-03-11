@@ -39,17 +39,20 @@ function whenWasThat($time) {
 
 function getRaidTitle($raid) {
     $id = '`#'.$raid->id.'`';
-    $comment = '*'.$raid->comment.'*'.($raid->authorServ ? ' ('.strtoupper($raid->authorServ).')' : '');
+    //$comment = '*'.$raid->comment.'*'.($raid->authorServ ? ' ('.strtoupper($raid->authorServ).')' : '');
+    $comment = '*'.$raid->comment.'*';
+    $server = ($raid->authorServ ? strtoupper($raid->authorServ) : '');
     $authorName = $raid->authorName;
     $time = whenWasThat($raid->creationDate);
     $closed = ($raid->closed ? ' [CLOSED]' : '');
-    return 'Raid '.$id.' - '.$comment.' by '.$authorName.' '.$time.$closed;
+    //return 'Raid '.$id.' • '.$comment.' by '.$authorName.' '.$time.$closed;
+    return 'Raid '.$id.' • **'.$server.'** • '.$comment.' by **'.$authorName.'** '.$time.$closed;
 }
 
 $lines = [];
 $lines[] = getRaidTitle($raid);
 $lines[] = 'Raid members :';
 foreach ($members as $member) {
-    $lines[] = '- '.$member->memberName.' ('.$member->comment.')';
+    $lines[] = '• '.$member->memberName.' ('.$member->comment.')';
 }
 reply(implode("\r\n", array_filter($lines)));
