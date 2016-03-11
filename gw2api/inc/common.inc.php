@@ -16,7 +16,7 @@ function parseArgs() {
         }
     }
     $content = trim(str_replace(['"', "'"], '', implode(' ', $splits)));
-    return ['content' => $content, 'options' => $options, $splits];
+    return ['content' => $content, 'options' => $options, 'splits' => $splits];
 }
 
 function isId($val) {
