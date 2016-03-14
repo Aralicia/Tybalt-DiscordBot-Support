@@ -23,12 +23,12 @@ function isId($val) {
     return ctype_digit($val);
 }
 //function reply($message, $code=false) {
-function reply($message, $code=false, $pmTo=[]) {
+function reply($message, $code=false, $pmTo=null) {
     if ($code) {
         $message = '```'."\r\n".$message.'```';
     }
     //$json = json_encode(['status' => 'ok', 'print' => $message]);
-    $json = json_encode(['status' => 'ok', 'print' => $message, 'pmTo' => $pmTo]);
+    $json = json_encode(['status' => 'ok', 'print' => $message]);
     echo $json;
     exit();
 }
