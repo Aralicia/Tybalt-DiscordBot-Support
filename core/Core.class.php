@@ -4,8 +4,7 @@ class Core {
   
   /*** SETUP & AUTOLOADING ***/
   public static function setup() {
-    echo ('Core::setup()');
-    self::$loadPaths = ['/', '/models/'];
+    self::$loadPaths = ['/', '/models/', '/utils/'];
     spl_autoload_register('Core::autoloadCallback');
   }
   public static function autoloadCallback($class) {

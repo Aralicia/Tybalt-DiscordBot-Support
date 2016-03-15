@@ -18,11 +18,13 @@ print_r(Command::getParams());
 print_r(Command::getAuthor());
 */
 
+
 $entities = Entity::find([
   'types' => ['skill', 'trait'],
-  'query' => implode(' '.Command::getParams())
+  'query' => implode(' ', Command::getParams())
 ]);
+/*
 print_r($entities);
-
+ */
 
 echo "\r\nok\r\n";
