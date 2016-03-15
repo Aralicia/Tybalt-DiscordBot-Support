@@ -21,6 +21,17 @@ function fetchAndDisplay($id, $entrypoint, $template, $options, $error) {
     }
     include(__DIR__.'/templates/'.$template.'.php');
 }
+function displayItem($link) {
+  $data = $link->getItemData();
+  $message = "This is an Item with id ".$data['item_id'];
+  if (isset($data['wardrobe_id'])) {
+    $message .= " with skin ".$data['wardrobe_id'];
+  }
+  if (isset($data['sigils'])) {
+    $message .= " containing sigils ".implode(',', $data['sigils']);
+  }
+  reply($message);
+}
 
 $args = parseArgs();
 $options = $args['options'];
@@ -37,6 +48,7 @@ switch($link->getHeader()) {
         reply("Coins : ".displayCoins($link->getCoin()));
         break;
     case 'Item':
+        displayItem($link);
         break;
     case 'NPCText':
         reply("This is a NPC Text with ID ".$link->getId());
