@@ -33,38 +33,49 @@ class Entity {
 
     if (isset($filter['types'])) {
       $q = [];
-      foreach($filter['types'] as $type) {
+      foreach($filter['types'] as $key => $type) {
         $paramTypes .= "s";
-        $params[] = $type;
+        $params[] = & $filter['types'][$key];
         $q[] = '?';
       }
       $whereFilters[] = 'type IN ('.implode(',', $q).')';
     }
     if (isset($filter['api_id'])) {
       $paramTypes .= "s";
-      $params[] = $filter['api_id'];
+      $params[] = & $filter['api_id'];
       $whereFilters[] = 'api_id = ?';
     }
     if (isset($filter['name'])) {
       $paramTypes .= "s";
-      $params[] = $filter['name'];
+      $params[] = & $filter['name'];
       $whereFilters[] = 'name = ?';
     }
     if (isset($filter['name_search'])) {
+      $filter['name_search_like'] = '%'.$filter['name_search'].'%';
       $paramTypes .= "s";
-      $params[] = '%'.$filter['name_search'].'%';
-      $whereFilters[] = 'name LIKE = ?';
+      $params[] = & $filter['name_search_like'];
+      $whereFilters[] = 'name LIKE ?';
     }    
 
-    $querySelect = 'SELECT *';
+    $querySelect = 'SELECT id, api_id, name, type';
     $queryFrom = 'FROM entity';
     $queryWhere = (count($whereFilters) > 0 ? 'WHERE '.implode(' AND ', $whereFilters): '');
     
     $query = $querySelect.' '.$queryFrom.' '.$queryWhere;
 
+    array_unshift($params, $paramTypes);
     
-    echo ($query);
-    echo ($paramTypes);
-    print_r($params);
+    $db = Database::get();
+    $st = $db->prepare($query);
+    call_user_func_array([$st, 'bind_param'], $params);
+    $st->execute();
+    
+    $resultData = ['id' => null, 'api_id' => null, 'name' => null, 'type' => null];
+    $results = [];
+    $st->bind_result($resultData['id'], $resultData['api_id'], $resultData['name'], $resultData['type']);
+    while($st->fetch()) {
+      $results[] = (object)['id' => $resultData['id'], 'api_id' => $resultData['api_id'], 'name' => $resultData['name'], 'type' => $resultData['type']];
+    }
+    return ($results);
   }
 }

@@ -8,13 +8,18 @@ class Command {
     $data = array_merge($argv);
     self::$script = basename(array_shift($data), '.php');
     self::$rawData = $data;
-    $jsonData = [];
+    $jsonData = (object)[];
     foreach($data as $part) {
       $jsonData = (object)array_merge((array)$jsonData, (array)json_decode($part));
     }
-    $commandLine = $jsonData->commandline;
-    $jsonData->command = $commandLine[0];
-    $jsonData->params = array_slice($commandLine, 1);
+    if (isset($jsonData->commandline)) {
+      $commandLine = $jsonData->commandline;
+      $jsonData->command = $commandLine[0];
+      $jsonData->params = array_slice($commandLine, 1);
+    } else {
+      $jsonData->command = "";
+      $jsonData->params = [];
+    }
     self::$jsonData = $jsonData;
   }
   

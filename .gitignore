@@ -1,2 +1,4 @@
 groups/config/
 gw2api/config/
+config/*
+!config/*.sample
