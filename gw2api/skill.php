@@ -1,5 +1,6 @@
 <?php
 
+/*
 $argv[1] = json_encode((object)[
   'commandline' => ['!skill', 'Bloody'],
   'author' => (object)[
@@ -7,8 +8,11 @@ $argv[1] = json_encode((object)[
     'name' => 'XNAMEX',
   ]
 ]);
+ */
 
 require_once(dirname(__DIR__).'/core/Core.class.php');
+
+Template::setTemplatePath(__DIR__.'/templates/');
 
 $params = Command::getParams();
 

@@ -1,8 +1,27 @@
 <?php
 
 class Entity {
-  
+
+  public $id;
+  public $api_id;
+  public $name; 
+  public $type;
+
+  public function __construct($id='',$api_id='',$name='',$type='') {
+    $this->id = $id;
+    $this->api_id = $api_id;
+    $this->name = $name;
+    $this->type = $type;
+  }
+
   /*** STATIC ***/
+  public static function findOne($filter) {
+    $values = self::find($filter);
+    if (count($values) > 0) {
+      return $values[0];
+    }
+    return new Entity();
+  }
   public static function find($filter) {
     $whereFilters = [];
     $paramTypes = "";
@@ -74,7 +93,7 @@ class Entity {
     $results = [];
     $st->bind_result($resultData['id'], $resultData['api_id'], $resultData['name'], $resultData['type']);
     while($st->fetch()) {
-      $results[] = (object)['id' => $resultData['id'], 'api_id' => $resultData['api_id'], 'name' => $resultData['name'], 'type' => $resultData['type']];
+      $results[] = new Entity($resultData['id'], $resultData['api_id'], $resultData['name'], $resultData['type']);
     }
     return ($results);
   }

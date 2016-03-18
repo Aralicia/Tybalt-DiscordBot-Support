@@ -6,6 +6,10 @@ class Template {
   public static function setup() {
     self::$path = getcwd().'/templates/';
   }
+
+  public static function setTemplatePath($path) {
+    self::$path = $path;
+  }
   
   public static function load($name, $data) {
     $path = self::$path.''.$name.'.tpl.php';
