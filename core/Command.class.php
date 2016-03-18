@@ -25,7 +25,8 @@ class Command {
         } else if (preg_match('/^--(.+)$/', $entry, $matches)) {
           $jsonData->options[$matches[1]] = true;
         } else if (preg_match('/^-([^-]+)$/', $entry, $matches)) {
-          foreach(explode('', $matches[1]) as $match) {
+          $jsonData->options[] = $matches[1];
+          foreach(str_split($matches[1]) as $match) {
             $jsonData->options[$match] = true;
           }
         } else {

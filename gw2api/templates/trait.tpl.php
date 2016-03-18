@@ -3,7 +3,7 @@
     $specialization = Entity::findOne([ 'types' => ['specialization'], 'api_id' => $data->specialization]);
     $trait = ($data->tier == 1 ? "Adept" : ($data->tier == 2 ? "Master" : ($data->tier == 3 ? "Grandmaster" : "")));
     echo implode(' • ', array_filter([
-        $data->name,
+        $data->name.' ('.$data->id.')',
         $specialization->name,
         $data->slot.' '.$trait.' trait'
     ]));

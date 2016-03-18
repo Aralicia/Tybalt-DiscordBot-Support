@@ -56,6 +56,9 @@ class GW2APIFacts {
                 return 'Radius : '.$fact->distance;
                 break;
             case 'Number':
+                if (isset($fact->text)) { 
+                    return $fact->text . ' : ' . $fact->value;
+                }
                 return 'Number of Targets : '.$fact->value;
                 break;
             case 'Percent':

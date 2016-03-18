@@ -1,4 +1,7 @@
 <?php
+
+    $verbose = Command::getOption(['verbose', 'v']);
+    
     // Title Line
     $profession = (count($data->professions) == 1 ? $data->professions[0] : null);
     $slot_num = substr($data->slot, -1);
@@ -14,7 +17,7 @@
     $categories = (isset($skill->categories) && count($skill->categories) > 0 ? implode(', ', $data->categories) : null);
     
     echo implode(' • ', array_filter([
-        $data->name,
+        $data->name.' ('.$data->id.')',
         $profession,
         $type,
         $categories
@@ -37,7 +40,7 @@
     // Fact Lines
     foreach(GW2APIFacts::getFacts($data) as $fact) {
       if (isset($fact->formated)) {
-        if ($fact->requires_trait) {
+        if (isset($fact->requires_trait) && $verbose) {
           $trait = Entity::findOne([ 'types' => ['trait'], 'api_id' => $fact->requires_trait]);
           if (!empty($trait->name)) {
             echo Format::NewLine();
@@ -47,12 +50,12 @@
           echo Format::NewLine();
           echo '• '.$fact->formated;
         }
-        if (isset($fact->overrides)) {
+        if (isset($fact->overrides) && $verbose) {
           foreach($fact->overrides as $ofact) {
-            $trait = Entity::findOne([ 'types' => ['trait'], 'api_id' => $ofact->requires_trai]);
+            $trait = Entity::findOne([ 'types' => ['trait'], 'api_id' => $ofact->requires_trait]);
             if (!empty($trait->name)) {
               echo Format::NewLine()."\t";
-              echo utf(0x21B3).' '.$ofact->formated.' ('.$trait->name.' - '.$ofact->requires_trait.')';
+              echo Format::UTF8(0x21B3).' '.$ofact->formated.' ('.$trait->name.' - '.$ofact->requires_trait.')';
             }
           }
         }
