@@ -18,7 +18,14 @@ class Format {
   public static function Code($message) {
     return '`'.$message.'`';
   }
-  public static function CodeBlock($message) {
-    return '```'.$message.'```';
+  public static function CodeBlock($message, $language = "") {
+    return '```'.$language.self::NewLine().$message.'```';
+  }
+  
+  public static function UTF8($code) {
+    return html_entity_decode('&#'.$code.';');
+  }
+  public static function NewLine() {
+    return "\r\n";
   }
 }
