@@ -12,13 +12,28 @@ class Command {
     foreach($data as $part) {
       $jsonData = (object)array_merge((array)$jsonData, (array)json_decode($part));
     }
+    
+    $jsonData->command = "";
+    $jsonData->options = [];
+    $jsonData->params = [];
     if (isset($jsonData->commandline)) {
       $commandLine = $jsonData->commandline;
       $jsonData->command = $commandLine[0];
-      $jsonData->params = array_slice($commandLine, 1);
+      foreach(array_slice($commandLine, 1) as $entry) {
+        if (preg_match('/^--(.+)=(.*)$/', $entry, $matches)) {
+          $jsonData->options[$matches[1]] = $matches[2];
+        } else if (preg_match('/^--(.+)$/', $entry, $matches)) {
+          $jsonData->options[$matches[1]] = true;
+        } else if (preg_match('/^-([^-]+)$/', $entry, $matches)) {
+          foreach(explode('', $matches[1]) as $match) {
+            $jsonData->options[$match] = true;
+          }
+        } else {
+          $jsonData->params[] = $entry;
+        }
+      }
     } else {
-      $jsonData->command = "";
-      $jsonData->params = [];
+      $jsonData->commandline = [];
     }
     self::$jsonData = $jsonData;
   }
@@ -31,6 +46,17 @@ class Command {
   }
   public static function getJsonData() {
     return self::$jsonData;
+  }
+  public static function getOption($keys, $default=false) {
+    if (!is_array($keys)) {
+      $keys = [$keys];
+    }
+    foreach($keys as $key) {
+      if (isset(self::$jsonData->options[$key])) {
+        return self::$jsonData->options[$key];
+      }
+    }
+    return $default;
   }
   
   public static function __callStatic($name, $argument) {
