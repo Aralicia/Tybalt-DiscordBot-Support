@@ -25,7 +25,11 @@ class Format {
   public static function UTF8($code) {
     return html_entity_decode('&#'.$code.';');
   }
-  public static function NewLine() {
-    return "\r\n";
+  public static function NewLine($count=1) {
+    $val = '';
+    for ($i = 0; $i < $count; $i++) {
+      $val .= "\r\n"
+    }
+    return $val;
   }
 }

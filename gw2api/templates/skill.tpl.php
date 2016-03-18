@@ -26,16 +26,14 @@
 
     // Description Line
     echo $data->description;
-    echo Format::NewLine();
+    echo Format::NewLine(2);
     
     // Energy & Initiative Lines
     if (isset($data->cost)) {
-        echo Format::NewLine();
-        echo '• Energy Cost : '.$data->cost;
+        echo '• Energy Cost : '.$data->cost . Format::NewLine();
     }
     if (isset($data->initiative)) {
-        echo Format::NewLine();
-        echo '• Initiative Cost : '.$data->cost;
+        echo '• Initiative Cost : '.$data->cost . Format::NewLine();
     }
     // Fact Lines
     foreach(GW2APIFacts::getFacts($data) as $fact) {
@@ -43,19 +41,16 @@
         if (isset($fact->requires_trait) && $verbose) {
           $trait = Entity::findOne([ 'types' => ['trait'], 'api_id' => $fact->requires_trait]);
           if (!empty($trait->name)) {
-            echo Format::NewLine();
-            echo Format::UTF8(0x2192).' '.$fact->formated.' ('.$trait->name.' - '.$fact->requires_trait.')';
+            echo Format::UTF8(0x2192).' '.$fact->formated.' ('.$trait->name.' - '.$fact->requires_trait.')' . Format::NewLine();
           }
         } else {
-          echo Format::NewLine();
-          echo '• '.$fact->formated;
+          echo '• '.$fact->formated . Format::NewLine();
         }
         if (isset($fact->overrides) && $verbose) {
           foreach($fact->overrides as $ofact) {
             $trait = Entity::findOne([ 'types' => ['trait'], 'api_id' => $ofact->requires_trait]);
             if (!empty($trait->name)) {
-              echo Format::NewLine()."\t";
-              echo Format::UTF8(0x21B3).' '.$ofact->formated.' ('.$trait->name.' - '.$ofact->requires_trait.')';
+              echo "\t".Format::UTF8(0x21B3).' '.$ofact->formated.' ('.$trait->name.' - '.$ofact->requires_trait.')' . Format::NewLine();
             }
           }
         }
@@ -66,11 +61,9 @@
     if (isset($data->flip_skill)) {
         $flip_skill = Entity::findOne([ 'types' => ['skill'], 'api_id' => $data->flip_skill]);
         if (in_array('Gadget', $data->categories)) {
-            echo Format::NewLine();
-            echo '• Overcharge : '.$flip_skill->name.' ('.$data->flip_skill.')';
+            echo '• Overcharge : '.$flip_skill->name.' ('.$data->flip_skill.')' . Format::NewLine();
         } else {
-            echo Format::NewLine();
-            echo '• Flip To : '.$flip_skill->name.' ('.$data->flip_skill.')';
+            echo '• Flip To : '.$flip_skill->name.' ('.$data->flip_skill.')' . Format::NewLine();
         }
     }
     
@@ -81,8 +74,7 @@
             if ($skill == null) return null;
             return $skill->name.' ('.$val.')';
         }, $data->transform_skills);
-        echo Format::NewLine();
-        echo '• Transformed Skills : '.implode(', ', array_filter($skillList));
+        echo '• Transformed Skills : '.implode(', ', array_filter($skillList)) . Format::NewLine();
     }
     
     // Bundle Skills Line
@@ -92,13 +84,15 @@
             if ($skill == null) return null;
             return $skill->name.' ('.$val.')';
         }, $data->bundle_skills);
-        echo Format::NewLine();
-        echo '• Bundle Skills : '.implode(', ', array_filter($skillList));
+        echo '• Bundle Skills : '.implode(', ', array_filter($skillList)) . Format::NewLine();
     }
     
     // Toolbelt Skill Line
     if (isset($data->toolbelt_skill)) {
         $toolbelt_skill = Entity::findOne([ 'types' => ['skill'], 'api_id' => $data->toolbelt_skill]);
-        echo Format::NewLine();
-        echo '• Toolbelt Skill : '.$toolbelt_skill->name.' ('.$data->toolbelt_skill.')';
+        echo '• Toolbelt Skill : '.$toolbelt_skill->name.' ('.$data->toolbelt_skill.')' . Format::NewLine();
     }
+
+    // Chat Link Line
+    $chatLink = ChatLink::fromEntity($entity);
+    echo 'Chat Link : '.$chatLink->getLink();

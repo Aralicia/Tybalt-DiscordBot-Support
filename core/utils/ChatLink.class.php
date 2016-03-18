@@ -19,6 +19,9 @@ class ChatLink {
     public function isValid() {
         return $this->valid;
     }
+    public function getLink() {
+        return $this->code;
+    }
     public function getHeader() {
         $types = self::getTypes();
         if (isset($types[$this->header])) {
@@ -88,6 +91,27 @@ class ChatLink {
             return false;
         }
         return true;
+    }
+    public static function fromEntity($entity) {
+      $codeData = null;
+      if ($entity->type == 'item') {
+        $codeData = pack('CCV', 6, 1, $entity->api_id);
+      }
+      if ($entity->type == 'skill') {
+        $codeData = pack('CV', 6, $entity->api_id);
+      }
+      if ($entity->type == 'trait') {
+        $codeData = pack('CV', 7, $entity->api_id);
+      }
+      if ($entity->type == 'recipe') {
+        $codeData = pack('CV', 9, $entity->api_id);
+      }
+      
+      if ($codeData == null) {
+        return null;
+      }
+      $code = '[&'.base64_encode($codeData).']';
+      return new ChatLink($code);
     }
 
     private static function getTypes() {

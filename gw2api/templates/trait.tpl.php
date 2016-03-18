@@ -11,7 +11,7 @@
 
     // Description Line
     echo $data->description;
-    echo Format::NewLine();
+    echo Format::NewLine(2);
 
     // Fact Lines
     foreach(GW2APIFacts::getFacts($data) as $fact) {
@@ -19,21 +19,22 @@
         if ($fact->requires_trait) {
           $trait = Entity::findOne([ 'types' => ['trait'], 'api_id' => $fact->requires_trait]);
           if (!empty($trait->name)) {
-            echo Format::NewLine();
-            echo Format::UTF8(0x2192).' '.$fact->formated.' ('.$trait->name.' - '.$fact->requires_trait.')';
+            echo Format::UTF8(0x2192).' '.$fact->formated.' ('.$trait->name.' - '.$fact->requires_trait.')' . Format::NewLine();
           }
         } else {
-          echo Format::NewLine();
-          echo '• '.$fact->formated;
+          echo '• '.$fact->formated . Format::NewLine();
         }
         if (isset($fact->overrides)) {
           foreach($fact->overrides as $ofact) {
-            $trait = Entity::findOne([ 'types' => ['trait'], 'api_id' => $ofact->requires_trai]);
+            $trait = Entity::findOne([ 'types' => ['trait'], 'api_id' => $ofact->requires_trait]);
             if (!empty($trait->name)) {
-              echo Format::NewLine()."\t";
-              echo utf(0x21B3).' '.$ofact->formated.' ('.$trait->name.' - '.$ofact->requires_trait.')';
+              echo "\t".Format::UTF8(0x21B3).' '.$ofact->formated.' ('.$trait->name.' - '.$ofact->requires_trait.')' . Format::NewLine();
             }
           }
         }
       }
     }
+
+    // Chat Link Line
+    $chatLink = ChatLink::fromEntity($entity);
+    echo 'Chat Link : '.$chatLink->getLink();
