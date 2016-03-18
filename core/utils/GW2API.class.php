@@ -18,6 +18,7 @@ class GW2API {
         if (isset($options['params'])) {
             $url = $url.'?'.http_build_query($options['params'], null, ini_get('arg_separator.output'),  PHP_QUERY_RFC3986);
         }
+        echo ($url);
         
         if (isset($options['auth']) || isset($options['post'])) {
             $return = self::curl_call($url, $options);

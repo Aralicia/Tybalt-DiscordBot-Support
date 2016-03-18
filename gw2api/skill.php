@@ -31,7 +31,7 @@ if (count($params) > 0) {
     foreach($entities as $entity) {
       $data = GW2API::v2(
         ($entity->type == 'skill' ? 'skills' : 'traits'),
-        ['params' => ['id' => $entity->id]]
+        ['params' => ['id' => $entity->api_id]]
       );
       Response::addMessage(
         Format::CodeBlock(Template::load($entity->type, ['entity' => $entity, 'data' => $data]))

@@ -16,9 +16,9 @@ class Template {
     }
     return '';
   }
-  private static function _load($path, $data) {
-    extract($data, EXTR_SKIP);
-    include($path);
+  private static function _load($_tplpath, $_tpldata) {
+    extract($_tpldata, EXTR_SKIP);
+    include($_tplpath);
   }
   
   /*** ATTRIBUTES ***/
