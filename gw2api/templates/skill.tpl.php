@@ -18,8 +18,8 @@
     
     echo implode(' • ', array_filter([
         $data->name.' ('.$data->id.')',
+        $type.' skill',
         $profession,
-        $type,
         $categories
     ]));
     echo Format::NewLine();
@@ -94,5 +94,6 @@
     }
 
     // Chat Link Line
+    echo Format::NewLine();
     $chatLink = ChatLink::fromEntity($entity);
     echo 'Chat Link : '.$chatLink->getLink();

@@ -28,7 +28,7 @@ class Format {
   public static function NewLine($count=1) {
     $val = '';
     for ($i = 0; $i < $count; $i++) {
-      $val .= "\r\n"
+      $val .= "\r\n";
     }
     return $val;
   }
