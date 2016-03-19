@@ -1,12 +1,5 @@
 <?php
 
-require_once(dirname(__DIR__).'/core/Core.class.php');
-Template::setTemplatePath(__DIR__.'/templates/');
-$params = Command::getParams();
-
-Response::addMessage(print_r($params, true));
-Response::send();
-
 $jsonRaw = $argv['1'];
 //$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["announce","Doing","Spirit Vale","03/11 '.uniqid().'"]}';
 //$jsonRaw = '{"author":{"na":false,"eu":true,"name":"Aralicia","id":"114698444584517640"},"args":["list"]}';
