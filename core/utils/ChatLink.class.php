@@ -95,7 +95,7 @@ class ChatLink {
     public static function fromEntity($entity) {
       $codeData = null;
       if ($entity->type == 'item') {
-        $codeData = pack('CCV', 6, 1, $entity->api_id);
+        $codeData = pack('CCV', 2, 1, $entity->api_id);
       }
       if ($entity->type == 'skill') {
         $codeData = pack('CV', 6, $entity->api_id);

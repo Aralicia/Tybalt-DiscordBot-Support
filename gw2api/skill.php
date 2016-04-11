@@ -15,6 +15,7 @@ require_once(dirname(__DIR__).'/core/Core.class.php');
 Template::setTemplatePath(__DIR__.'/templates/');
 
 $params = Command::getParams();
+$verbose = Command::getOption(['verbose', 'v']);
 
 if (count($params) > 0) {
   $entities = Entity::find([
@@ -25,11 +26,11 @@ if (count($params) > 0) {
   $count = count($entities);
   if ($count < 1) {
     Response::addMessage("I've not found anything, sorry.");
-  } else if ($count > 10) {
+  } else if ($count > 10 && $verbose == false) {
     Response::addMessage("I've found ".$count." matches. Can you be more precise ?");
   } else if ($count > 3) {
-    Response::addMessage("I've found the following skills : `".implode('`, `', array_map(function($entity) {
-      return $entity->name.' ('.$entity->id.')';
+    Response::addMessage("I've found the following skills and traits : `".implode('`, `', array_map(function($entity) {
+      return $entity->name.' ('.$entity->api_id.')';
     }, $entities))."`. Which one do you want ?");
   } else {
     foreach($entities as $entity) {

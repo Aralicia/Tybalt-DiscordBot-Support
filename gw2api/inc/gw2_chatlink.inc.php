@@ -44,6 +44,7 @@ class ChatLink {
         $itemCount = $parsed['count'];
         if ($parsed['part1'] >= 0xE0000000) {
             return [
+                'count' => $itemCount,
                 'item_id' => $parsed['part1'] - 0xE0000000,
                 'wardrobe_id' => $parsed['part2'],
                 'sigils' => [$parsed['part3'], $parsed['part4']]
@@ -51,6 +52,7 @@ class ChatLink {
         }
         if ($parsed['part1'] >= 0xC0000000) {
             return [
+                'count' => $itemCount,
                 'item_id' => $parsed['part1'] - 0xC0000000,
                 'wardrobe_id' => $parsed['part2'],
                 'sigils' => [$parsed['part3']]
@@ -58,23 +60,26 @@ class ChatLink {
         }
         if ($parsed['part1'] >= 0x80000000) {
             return [
+                'count' => $itemCount,
                 'item_id' => $parsed['part1'] - 0x80000000,
                 'wardrobe_id' => $parsed['part2']
             ];
         }
         if ($parsed['part1'] >= 0x60000000) {
             return [
+                'count' => $itemCount,
                 'item_id' => $parsed['part1'] - 0x60000000,
                 'sigils' => [$parsed['part2'], $parsed['part3']]
             ];
         }
         if ($parsed['part1'] >= 0x40000000) {
             return [
+                'count' => $itemCount,
                 'item_id' => $parsed['part1'] - 0x40000000,
                 'sigils' => [$parsed['part2']]
             ];
         }
-        return ['item_id' => $parsed['part1']];
+        return ['count' => $itemCount, 'item_id' => $parsed['part1']];
     }
 
     public static function check($code, $strict = true) {

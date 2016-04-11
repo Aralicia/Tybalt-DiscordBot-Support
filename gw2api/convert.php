@@ -23,12 +23,17 @@ function fetchAndDisplay($id, $entrypoint, $template, $options, $error) {
 }
 function displayItem($link) {
   $data = $link->getItemData();
-  $message = "This is an Item with id ".$data['item_id'];
+  $itemdata = api()->v2('items', ['params' => ['id' => $data['item_id']]]);
+  $message = "".$data['count']." ".$itemdata->name." (".$data['item_id'].")";
   if (isset($data['wardrobe_id'])) {
     $message .= " with skin ".$data['wardrobe_id'];
   }
   if (isset($data['sigils'])) {
-    $message .= " containing sigils ".implode(',', $data['sigils']);
+    $message .= " with";
+    foreach($data['sigils'] as $sigilId) {
+      $sigildata = api()->v2('items', ['params' => ['id' => $sigilId]]);
+      $message .= " ".$sigildata->name." (".$sigilId.")";
+    }
   }
   reply($message);
 }
