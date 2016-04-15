@@ -1,15 +1,5 @@
 <?php
 
-/*
-$argv[1] = json_encode((object)[
-  'commandline' => ['!skill', 'Bloody'],
-  'author' => (object)[
-    'id' => 'XIDX',
-    'name' => 'XNAMEX',
-  ]
-]);
- */
-
 require_once(dirname(__DIR__).'/core/Core.class.php');
 
 Template::setTemplatePath(__DIR__.'/templates/');

@@ -1,15 +1,5 @@
 <?php
 
-/*
-$argv[1] = json_encode((object)[
-  'commandline' => ['!skill', 'Bloody'],
-  'author' => (object)[
-    'id' => 'XIDX',
-    'name' => 'XNAMEX',
-  ]
-]);
- */
-
 require_once(dirname(__DIR__).'/core/Core.class.php');
 
 Template::setTemplatePath(__DIR__.'/templates/');
@@ -53,20 +43,6 @@ if (count($params) > 0) {
       Response::addMessage("I've found ".count($entities)." additional partial matches. You can get a list with !item --list ".$merge_param);
     }
   }
-  /*
-  } else if ($count > 3 || $list) {
-    Response::addMessage("I've found the following items : `".implode('`, `', array_map(function($entity) {
-      return $entity->name.' ('.$entity->api_id.')';
-    }, $entities))."`. Which one do you want ?");
-  } else {
-    foreach($entities as $entity) {
-      $data = GW2API::v2('items', ['params' => ['id' => $entity->api_id]]);
-       error_log(print_r($data, true));
-      Response::addMessage(
-        Format::CodeBlock(Template::load('item', ['entity' => $entity, 'data' => $data]))
-      );
-    }
-  } */
   Response::send();
 }
 
