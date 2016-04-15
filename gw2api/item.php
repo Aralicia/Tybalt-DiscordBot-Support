@@ -28,7 +28,7 @@ if (count($params) > 0) {
   $merge_param = implode(' ', $params);
   if ($count < 1) {
     Response::addMessage("I've not found anything, sorry.");
-  } else if ($count > 100) {
+  } else if ($count > 50) {
     Response::addMessage("I've found ".$count." matches. Can you be more precise ?");
   } else if ($list) {
     Response::addMessage(

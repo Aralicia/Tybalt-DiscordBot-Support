@@ -125,7 +125,14 @@ class Entity {
       usort($results, function($a, $b) use ($string){
         $la = $a->getDistance($string);
         $lb = $b->getDistance($string);
-        return ($la == $lb ? 0 : ($la < $lb ? -1 : 1 ));
+        if ($la == $lb) {
+          if ($a->name == $b->name) {
+            return ($a->api_id == $b->api_id ? 0 : ($a->api_id < $b->api_id ? -1 : 1 ));
+          } else {
+            return strcmp($a->name, $b->name);
+          }
+        }
+        return ($la < $lb ? -1 : 1 );
       });
     }
     //error_log(print_r($results, true));

@@ -16,31 +16,41 @@ Template::setTemplatePath(__DIR__.'/templates/');
 
 $params = Command::getParams();
 $verbose = Command::getOption(['verbose', 'v']);
+$list = Command::getOption(['list', 'l']);
 
 if (count($params) > 0) {
   $entities = Entity::find([
     'types' => ['skill', 'trait'],
-    'query' => implode(' ', $params)
+    'query' => $params
   ]);
   
   $count = count($entities);
+  $merge_param = implode(' ', $params);
   if ($count < 1) {
     Response::addMessage("I've not found anything, sorry.");
-  } else if ($count > 10 && $verbose == false) {
+  } else if ($count > 50) {
     Response::addMessage("I've found ".$count." matches. Can you be more precise ?");
-  } else if ($count > 3) {
-    Response::addMessage("I've found the following skills and traits : `".implode('`, `', array_map(function($entity) {
-      return $entity->name.' ('.$entity->api_id.')';
-    }, $entities))."`. Which one do you want ?");
+  } else if ($list) {
+    Response::addMessage(
+      Template::load('skilllist', ['list' => $entities])
+    );
   } else {
-    foreach($entities as $entity) {
-      $data = GW2API::v2(
-        ($entity->type == 'skill' ? 'skills' : 'traits'),
-        ['params' => ['id' => $entity->api_id]]
-      );
+    $first = true;
+    while (count($entities) > 0) {
+      $entity = array_shift($entities);
+      if ($entity->getDistance($merge_param) > 0 && !$first) {
+        array_unshift($entities, $entity);
+        break;
+      }
+      $data = GW2API::v2(($entity->type == 'skill' ? 'skills' : 'traits'), ['params' => ['id' => $entity->api_id]]);
       Response::addMessage(
         Format::CodeBlock(Template::load($entity->type, ['entity' => $entity, 'data' => $data]))
       );
+      $first = false;
+    }
+    $count = count($entities);
+    if ($count > 0) {
+      Response::addMessage("I've found ".count($entities)." additional partial matches. You can get a list with ".Command::getCommand()." --list ".$merge_param);
     }
   }
   Response::send();
